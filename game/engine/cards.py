@@ -3,7 +3,7 @@ from collections import namedtuple
 import itertools
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 import random
 
 
@@ -67,11 +67,26 @@ class Card:
 
 
 class Stack:
-    def __init__(self, cards: List[Card]):
+    def __init__(self, cards: Union[None, List[Card]]):
         self.cards = cards
 
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)
+
+    @classmethod
+    def new_empty(cls):
+        return cls(cards=[])
+
+    def __len__(self):
+        return len(self.cards)
+
+    def deal(self,index:int):
+        return self.cards.pop(index)
+    
+    def deal_top(self,n=1):
+        cards_dealt=[ self.deal(index=0) for i in range(n)]
+        return cards_dealt
+
 
 
 class Deck(Stack):
@@ -83,14 +98,15 @@ class Deck(Stack):
             self.shuffle(seed=seed)
 
     @classmethod
-    def new(self) -> 'Deck':
-        return Deck(is_shuffle=True)
+    def new(cls):
+        return cls(is_shuffle=True)
 
     @classmethod
-    def new_sorted(self) -> 'Deck':
-        return Deck(is_shuffle=False)
+    def new_sorted(cls):
+        return cls(is_shuffle=False)
 
 
-sample_deck = Deck.new()
-sample_deck.cards
+a=Deck.new()
+
+a.cards
 # %%
