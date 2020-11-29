@@ -3,7 +3,8 @@ from collections import namedtuple
 import itertools
 from dataclasses import dataclass
 from enum import Enum
-from typing import List,Optional
+from typing import List, Optional
+import random
 
 
 class EnumWithAttrs(Enum):
@@ -55,7 +56,7 @@ class Card:
 
     def __hash__(self):
         return hash((self.pip.label, self.suit.label))
-    
+
     def __repr__(self):
         # return str((self.pip.abv,self.suit.abv))
         return self.__str__()
@@ -65,18 +66,31 @@ class Card:
         return code.encode().decode('unicode_escape')
 
 
-
-
 class Stack:
-    def __init__(self,cards:List[Card],is_shuffle=False):
+    def __init__(self, cards: List[Card]):
         self.cards = cards
-        self.is_shuffle=is_shuffle
+
+    def shuffle(self, seed=None):
+        random.shuffle(self.cards, seed)
+
 
 class Deck(Stack):
-    def __init__(self,is_shuffle=False):
-        self.cards= [
-            Card(pip, suit) for suit in Suit for pip in Pip 
+    def __init__(self, is_shuffle=False, seed=None):
+        self.cards = [
+            Card(pip, suit) for suit in Suit for pip in Pip
         ]
-    
-sample_deck=Deck()
+        if is_shuffle:
+            self.shuffle(seed=seed)
+
+    @classmethod
+    def new(self) -> 'Deck':
+        return Deck(is_shuffle=True)
+
+    @classmethod
+    def new_sorted(self) -> 'Deck':
+        return Deck(is_shuffle=False)
+
+
+sample_deck = Deck.new()
+sample_deck.cards
 # %%
