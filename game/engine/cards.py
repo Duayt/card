@@ -73,20 +73,46 @@ class Stack:
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)
 
+    def __str__(self):
+        return f'Stack {len(self)} cards: \n {self.cards}'
+
+    @classmethod
+    def new_stack(cls,cards: Union[None, List[Card]]):
+        return Stack(cards=cards)
+
     @classmethod
     def new_empty(cls):
-        return cls(cards=[])
+        return cls.new_stack(cards=[])
+
+    @classmethod
+    def merge_new(cls,stack_a:Stack,stack_b:Stack):
+        return cls.new_stack(cards=stack_a.cards+stack_b.cards)
 
     def __len__(self):
         return len(self.cards)
 
-    def deal(self,index:int):
+    def pop(self, index: int):
         return self.cards.pop(index)
-    
-    def deal_top(self,n=1):
-        cards_dealt=[ self.deal(index=0) for i in range(n)]
-        return cards_dealt
 
+    def top(self, n_cards=1):
+        return Stack.new_stack(cards=[self.pop(index=0) for i in range(n_cards)])
+
+    def remove(self, index_list: Union[int, List[int]] = [0]):
+        if isinstance(index_list, int):
+            index_list = list(range(index_list))
+        index_list.sort(reverse=True)
+        return Stack.new_stack(cards=[self.pop(index=index) for index in index_list])
+
+    def add(self, card_list: Union[List[Card], Card] = []):
+        if isinstance(card_list, Card):
+            self.cards.append(card_list)
+        else:
+            self.cards.extend(card_list)
+
+
+
+    # def deal_to(target_stack:Stack,n_cards=1,index=0):
+    #     card_dealt=self.top(n_cards)
 
 
 class Deck(Stack):
@@ -97,16 +123,27 @@ class Deck(Stack):
         if is_shuffle:
             self.shuffle(seed=seed)
 
+    def __str__(self):
+        return f'Decks {len(self)} cards: \n {self.cards}'
+
     @classmethod
     def new(cls):
-        return cls(is_shuffle=True)
+        return Deck(is_shuffle=True)
 
     @classmethod
     def new_sorted(cls):
-        return cls(is_shuffle=False)
+        return Deck(is_shuffle=False)
 
 
-a=Deck.new()
+a_deck = Deck.new()
+a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
+b_deck= Deck.new_sorted()
+c_stacks=Deck.merge_new(a_deck,b_deck)
+print(a_deck)
+print(a_card)
+a_deck.add(a_card)
+print(a_deck)
 
-a.cards
+a_deck.add([a_card,a_card])
+print(a_deck)
 # %%
