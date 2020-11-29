@@ -1,49 +1,48 @@
 # %%
+from collections import namedtuple
+import itertools
 from dataclasses import dataclass
 from enum import Enum
+from typing import List,Optional
 
 
-class Pip(Enum):
-    def __init__(self, id, code, display, unicode=None):
-        self.id = id
-        self.code = code
-        self.display = display
+class EnumWithAttrs(Enum):
+    def __new__(cls, *args, **kwds):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = value
+        return obj
 
+    def __init__(self, label, abv, unicode):
+        self.label = label
+        self.abv = abv
         if unicode is None:
-            self.unicode = str(self.id)
+            self.unicode = self.value
         else:
             self.unicode = unicode
 
-    Ace = 1, 'ace', 'A'
-    Deuce = 2, 'deuce', '2'
-    Three = 3, 'three', '3'
-    Four = 4, 'fourt', '4'
-    Five = 5, 'five', '5'
-    Six = 6, 'six', '6'
-    Seven = 7, 'seven', '7'
-    Eight = 8, 'eight', '8'
-    Nine = 9, 'nine', '9'
-    Ten = 10, 'ten', '10', 'A'
-    Jack = 11, 'jack', 'J', 'B'
-    Queen = 12, 'queen', 'Q', 'C'
-    King = 13, 'king', 'K', 'D'
+
+class Pip(EnumWithAttrs):
+    Ace = 'ace', 'A', None
+    Deuce = 'deuce', '2', None
+    Three = 'three', '3', None
+    Four = 'fourt', '4', None
+    Five = 'five', '5', None
+    Six = 'six', '6', None
+    Seven = 'seven', '7', None
+    Eight = 'eight', '8', None
+    Nine = 'nine', '9', None
+    Ten = 'ten', '10', 'A'
+    Jack = 'jack', 'J', 'B'
+    Queen = 'queen', 'Q', 'C'
+    King = 'king', 'K', 'D'
 
 
-class Suit(Enum):
-    def __init__(self, id, code, display, unicode):
-        self.id = id
-        self.code = code
-        self.display = display
-
-        if unicode is None:
-            self.unicode = str(self.id)
-        else:
-            self.unicode = unicode
-
-    Club = 1, 'club', '♣', 'A'
-    Heart = 2, 'heart', '♥', 'B'
-    Diamond = 3, 'diamond', '♦', 'C'
-    Spade = 4, 'spade', '♠', 'D'
+class Suit(EnumWithAttrs):
+    Club = 'club', '♣', 'A'
+    Heart = 'heart', '♥', 'B'
+    Diamond = 'diamond', '♦', 'C'
+    Spade = 'spade', '♠', 'D'
 
 
 @dataclass
@@ -52,10 +51,32 @@ class Card:
     suit: Suit
 
     def __str__(self):
-        return f'{self.pip.display}{self.suit.display}'
+        return f'{self.pip.abv}{self.suit.abv}'
+
+    def __hash__(self):
+        return hash((self.pip.label, self.suit.label))
+    
+    def __repr__(self):
+        # return str((self.pip.abv,self.suit.abv))
+        return self.__str__()
 
     def unicode(self):
-        code= f'\\U0001F0{self.suit.unicode}{self.pip.unicode}'
+        code = f'\\U0001F0{self.suit.unicode}{self.pip.unicode}'
         return code.encode().decode('unicode_escape')
-        
+
+
+
+
+class Stack:
+    def __init__(self,cards:List[Card],is_shuffle=False):
+        self.cards = cards
+        self.is_shuffle=is_shuffle
+
+class Deck(Stack):
+    def __init__(self,is_shuffle=False):
+        self.cards= [
+            Card(pip, suit) for suit in Suit for pip in Pip 
+        ]
+    
+sample_deck=Deck()
 # %%
