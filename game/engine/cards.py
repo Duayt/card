@@ -1,11 +1,11 @@
 # %%
 from collections import namedtuple
 import itertools
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional, Union
 import random
-
 
 class EnumWithAttrs(Enum):
     def __new__(cls, *args, **kwds):

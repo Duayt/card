@@ -2,3 +2,6 @@ pylint
 autopep8
 mypy
 ipykernel
+pytest
+pytest-cov
+pytest-xdist
