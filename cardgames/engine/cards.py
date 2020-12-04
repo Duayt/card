@@ -1,11 +1,10 @@
 # %%
-from collections import namedtuple
-import itertools
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Union
 import random
+
 
 class EnumWithAttrs(Enum):
     def __new__(cls, *args, **kwds):
@@ -77,7 +76,7 @@ class Stack:
         return f'Stack {len(self)} cards: \n {self.cards}'
 
     @classmethod
-    def new_stack(cls,cards: Union[None, List[Card]]):
+    def new_stack(cls, cards: Union[None, List[Card]]):
         return Stack(cards=cards)
 
     @classmethod
@@ -85,7 +84,7 @@ class Stack:
         return cls.new_stack(cards=[])
 
     @classmethod
-    def merge_new(cls,stack_a:Stack,stack_b:Stack):
+    def merge_new(cls, stack_a: Stack, stack_b: Stack):
         return cls.new_stack(cards=stack_a.cards+stack_b.cards)
 
     def __len__(self):
@@ -108,8 +107,6 @@ class Stack:
             self.cards.append(card_list)
         else:
             self.cards.extend(card_list)
-
-
 
     # def deal_to(target_stack:Stack,n_cards=1,index=0):
     #     card_dealt=self.top(n_cards)
@@ -135,15 +132,15 @@ class Deck(Stack):
         return Deck(is_shuffle=False)
 
 
-a_deck = Deck.new()
-a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
-b_deck= Deck.new_sorted()
-c_stacks=Deck.merge_new(a_deck,b_deck)
-print(a_deck)
-print(a_card)
-a_deck.add(a_card)
-print(a_deck)
+# a_deck = Deck.new()
+# a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
+# b_deck= Deck.new_sorted()
+# c_stacks=Deck.merge_new(a_deck,b_deck)
+# print(a_deck)
+# print(a_card)
+# a_deck.add(a_card)
+# print(a_deck)
 
-a_deck.add([a_card,a_card])
-print(a_deck)
+# a_deck.add([a_card,a_card])
+# print(a_deck)
 # %%
