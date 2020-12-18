@@ -37,12 +37,18 @@ class Pip(EnumWithAttrs):
     Queen = 'queen', 'Q', 'C'
     King = 'king', 'K', 'D'
 
+    def __str__(self):
+        return self.abv
+
 
 class Suit(EnumWithAttrs):
     Club = 'club', '♣', 'A'
     Heart = 'heart', '♥', 'B'
     Diamond = 'diamond', '♦', 'C'
     Spade = 'spade', '♠', 'D'
+
+    def __str__(self):
+        return self.abv
 
 
 @dataclass
