@@ -1,23 +1,69 @@
 # %%
 from dataclasses import dataclass
-from .core import Player, Deck, Game, Stack,Card
+from cardgames.core import Player, Deck, Game, Stack, Card
+from cardgames.cards import Pip, Suit
 from collections import Counter
-# >>> mylist = [20, 30, 25, 20, 30]
-# >>> max(k for k,v in Counter(mylist).items() if v>1)
-# 30
+
+
+class PokDengRules:
+    rule_JKQ: bool = False
+    rule_order: bool = False
+    rule_tripple: bool = False
+
+    @classmethod
+    @property
+    def rules(cls):
+        return (cls.rule_JKQ, cls.rule_order, cls.rule_tripple)
+
+    @classmethod
+    def set_rules(cls, rules: tuple[bool, bool, bool] = (True, True, True)):
+        cls.rule_JKQ = rules[0]
+        cls.rule_order = rules[1]
+        cls.rule_tripple = rules[2]
 
 
 class PokDengHand(Stack):
 
-    def get_bet_multipler(self):
+    @property
+    def bet_multipler(self):
         suits = [card.suit for card in self]
-        if 1 <= len(self) <= 3:
-            return max(v for k, v in Counter(suits).items())
+        suits.sort()
+        pips = [card.pip for card in self]
+        pips.sort()
+        same_suits = min(v for k, v in Counter(suits).items())
+        same_pips = min(v for k, v in Counter(pips).items())
+        if len(self) <= 2:
+            return max(same_suits, same_pips)
+        elif len(self) == 3:
+            if PokDengRules.rule_JKQ and set(pips).issubset([Pip.Jack, Pip.Queen, Pip.King]):
+                # 9 deng if same suit
+                print('jkq')
+                return 3 * same_suits
+            elif PokDengRules.rule_order and pips[2].value - pips[1].value == pips[1].value - pips[0].value == 1:
+                return 3 *same_suits
+            elif PokDengRules.rule_tripple and same_pips == 3:
+                return 5
+            elif same_suits == 3:
+                return same_suits
+            else:
+                return 1
         else:
             raise ValueError('Hand more than 2')
 
-    def get_value(self):
-        return int(str(sum(card.pip.value for card in self.cards))[-1])
+    @property
+    def value(self):
+        last_card_value = int(
+            str(sum(card.pip.value if card.pip.value < 10 else 10 for card in self.cards))[-1])
+        return last_card_value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def __str__(self):
+        return super().__str__() + f'|({self.value},{self.bet_multipler})'
 
 
 @dataclass

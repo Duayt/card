@@ -1,5 +1,5 @@
 # %%
-from .cards import Deck, Card, Stack
+from cardgames.cards import Deck, Card, Stack
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from collections import namedtuple
