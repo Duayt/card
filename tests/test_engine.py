@@ -1,6 +1,5 @@
 from cardgames.engine.cards import Pip, Suit, Card, Stack, Deck
 
-
 def test_card_attributes():
     a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
 
