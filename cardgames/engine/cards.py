@@ -81,8 +81,11 @@ class Card:
 
 
 class Stack:
-    def __init__(self, cards: Union[None, List[Card]]):
-        self.cards = cards
+    def __init__(self, cards: Union[None, List[Card]]=None):
+        if cards is not None:
+            self.cards = cards
+        else:
+            self.cards = []
 
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)
@@ -91,7 +94,7 @@ class Stack:
         return len(self.cards)
 
     def __str__(self):
-        return f'{len(self.cards)}: \n {self.cards}'
+        return f'{len(self.cards)}{self.cards}'
 
     def __repr__(self):
         return self.__str__()
@@ -102,7 +105,7 @@ class Stack:
 
     @classmethod
     def new_empty(cls):
-        return cls.new_stack(cards=[])
+        return cls.new_stack(cards=None)
 
     @classmethod
     def merge_new(cls, stack_a: Stack, stack_b: Stack):
@@ -141,7 +144,7 @@ class Deck(Stack):
         assert (other is None) or isinstance(other, Stack)
         cards = self.top(n=n)
         if other is None:
-            return cards
+            return Stack.new_stack(cards=cards.cards)
         else:
             other.add(cards=cards)
 
