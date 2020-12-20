@@ -2,10 +2,12 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
+from functools import total_ordering
 from typing import List, Union
 import random
 
 
+@total_ordering
 class EnumWithAttrs(Enum):
     def __new__(cls, *args, **kwds):
         value = len(cls.__members__) + 1
@@ -20,6 +22,12 @@ class EnumWithAttrs(Enum):
             self.unicode = self.value
         else:
             self.unicode = unicode
+
+    def __str__(self):
+        return self.abv
+
+    def __lt__(self, other):
+        return self.value < other.value
 
 
 class Pip(EnumWithAttrs):
@@ -37,9 +45,6 @@ class Pip(EnumWithAttrs):
     Queen = 'queen', 'Q', 'C'
     King = 'king', 'K', 'D'
 
-    def __str__(self):
-        return self.abv
-
 
 class Suit(EnumWithAttrs):
     Club = 'club', '♣', 'A'
@@ -47,10 +52,8 @@ class Suit(EnumWithAttrs):
     Diamond = 'diamond', '♦', 'C'
     Spade = 'spade', '♠', 'D'
 
-    def __str__(self):
-        return self.abv
 
-
+@total_ordering
 @dataclass
 class Card:
     pip: Pip
@@ -70,6 +73,12 @@ class Card:
         code = f'\\U0001F0{self.suit.unicode}{self.pip.unicode}'
         return code.encode().decode('unicode_escape')
 
+    def __eq__(self, other):
+        return ((self.pip.value, self.suit.value) == (other.pip.value, other.suit.value))
+
+    def __lt__(self, other):
+        return ((self.pip.value, self.suit.value) < (other.pip.value, other.suit.value))
+
 
 class Stack:
     def __init__(self, cards: Union[None, List[Card]]):
@@ -78,8 +87,14 @@ class Stack:
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)
 
+    def __len__(self):
+        return len(self.cards)
+
     def __str__(self):
-        return f'Stack {len(self)} cards: \n {self.cards}'
+        return f'{len(self.cards)}: \n {self.cards}'
+
+    def __repr__(self):
+        return self.__str__()
 
     @classmethod
     def new_stack(cls, cards: Union[None, List[Card]]):
@@ -93,14 +108,11 @@ class Stack:
     def merge_new(cls, stack_a: Stack, stack_b: Stack):
         return cls.new_stack(cards=stack_a.cards+stack_b.cards)
 
-    def __len__(self):
-        return len(self.cards)
-
     def pop(self, index: int):
         return self.cards.pop(index)
 
-    def top(self, n_cards=1):
-        return Stack.new_stack(cards=[self.pop(index=0) for i in range(n_cards)])
+    def top(self, n=1):
+        return Stack.new_stack(cards=[self.pop(index=0) for i in range(n)])
 
     def remove(self, index_list: Union[int, List[int]] = [0]):
         if isinstance(index_list, int):
@@ -108,14 +120,13 @@ class Stack:
         index_list.sort(reverse=True)
         return Stack.new_stack(cards=[self.pop(index=index) for index in index_list])
 
-    def add(self, card_list: Union[List[Card], Card] = []):
-        if isinstance(card_list, Card):
-            self.cards.append(card_list)
+    def add(self, cards: Union[List[Card], Card, Stack] = []):
+        if isinstance(cards, Card):
+            self.cards.append(cards)
+        elif isinstance(cards, (Stack, Deck)):
+            self.cards.extend(cards.cards)
         else:
-            self.cards.extend(card_list)
-
-    # def deal_to(target_stack:Stack,n_cards=1,index=0):
-    #     card_dealt=self.top(n_cards)
+            self.cards.extend(cards)
 
 
 class Deck(Stack):
@@ -126,8 +137,13 @@ class Deck(Stack):
         if is_shuffle:
             self.shuffle(seed=seed)
 
-    def __str__(self):
-        return f'Decks {len(self)} cards: \n {self.cards}'
+    def deal(self, other: Union[Stack, None] = None, n=1):
+        assert (other is None) or isinstance(other, Stack)
+        cards = self.top(n=n)
+        if other is None:
+            return cards
+        else:
+            other.add(cards=cards)
 
     @classmethod
     def new(cls):
@@ -137,16 +153,4 @@ class Deck(Stack):
     def new_sorted(cls):
         return Deck(is_shuffle=False)
 
-
-# a_deck = Deck.new()
-# a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
-# b_deck= Deck.new_sorted()
-# c_stacks=Deck.merge_new(a_deck,b_deck)
-# print(a_deck)
-# print(a_card)
-# a_deck.add(a_card)
-# print(a_deck)
-
-# a_deck.add([a_card,a_card])
-# print(a_deck)
 # %%
