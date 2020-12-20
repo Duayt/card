@@ -1,31 +1,23 @@
 # %%
-from cards import Deck, Card, Stack
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from collections import namedtuple
+from .core import Player, Deck, Game, Stack,Card
+from collections import Counter
+# >>> mylist = [20, 30, 25, 20, 30]
+# >>> max(k for k,v in Counter(mylist).items() if v>1)
+# 30
 
-class Game(ABC):
-    pass
 
+class PokDengHand(Stack):
 
-class Player:
-    def __init__(self, name, hand: Stack = None, wallet=100):
-        if hand is not None:
-            self.hand = hand
+    def get_bet_multipler(self):
+        suits = [card.suit for card in self]
+        if 1 <= len(self) <= 3:
+            return max(v for k, v in Counter(suits).items())
         else:
-            self.hand = Stack.new_empty()
-        self.name = name
-        self.wallet = wallet
+            raise ValueError('Hand more than 2')
 
-    def __str__(self):
-        return f'{self.name}: {str(self.hand)}'
-
-    def __repr__(self):
-        return str(self)
-
-    def check_hand(self):
-        value= sum([card.pip.value for card in self.hand])
-        return value
+    def get_value(self):
+        return int(str(sum(card.pip.value for card in self.cards))[-1])
 
 
 @dataclass
@@ -40,8 +32,8 @@ class PokDeng(Game):
 
 
 num_player = 1
-dealer = Player(name='dealer')
-players = [Player(name=f'p{i}') for i in range(num_player)]
+dealer = Player(name='dealer', hand=PokDengHand())
+players = [Player(name=f'p{i}', hand=PokDengHand()) for i in range(num_player)]
 
 # Game session
 # each player place bet

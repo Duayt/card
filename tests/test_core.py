@@ -1,4 +1,4 @@
-from cardgames.engine.cards import Pip, Suit, Card, Stack, Deck
+from cardgames.cards import Pip, Suit, Card, Stack, Deck
 
 def test_card_attributes():
     a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
@@ -7,7 +7,14 @@ def test_card_attributes():
     assert str(a_card.suit) == '♠'
 
 
-def test_pip():
+def test_card():
+    a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
+    b_card = Card.new(1, 4)
+
+    assert a_card == b_card
+
+
+def test_pip_suit():
     a_card = Card(pip=Pip.Ace, suit=Suit.Spade)
     b_card = Card(pip=Pip.Ace, suit=Suit.Heart)
     c_card = Card(pip=Pip.Deuce, suit=Suit.Spade)

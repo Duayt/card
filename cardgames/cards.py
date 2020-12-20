@@ -59,6 +59,10 @@ class Card:
     pip: Pip
     suit: Suit
 
+    @classmethod
+    def new(cls, pip: int, suit: int):
+        return cls(pip=Pip(pip), suit=Suit(suit))
+
     def __str__(self):
         return f'{self.pip.abv}{self.suit.abv}'
 
@@ -81,7 +85,7 @@ class Card:
 
 
 class Stack:
-    def __init__(self, cards: Union[None, List[Card]]=None):
+    def __init__(self, cards: Union[None, List[Card]] = None):
         if cards is not None:
             self.cards = cards
         else:
@@ -98,6 +102,9 @@ class Stack:
 
     def __repr__(self):
         return self.__str__()
+
+    def __iter__(self):
+        return iter(self.cards)
 
     @classmethod
     def new_stack(cls, cards: Union[None, List[Card]]):
