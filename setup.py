@@ -3,6 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+tests_require=['pytest',
+                   'ipykernel',
+                   'pytest-cov',
+                   'pytest-xdist',
+                   'autopep8'
+                    ]
 setuptools.setup(
     name="cardgames",  # Replace with your own username
     version="0.0.1",
@@ -20,18 +26,9 @@ setuptools.setup(
     ],
     python_requires='>=3.9',
     install_requires=[
-        "numpy",
-        "pygame",
+        "numpy==1.19.3",
+        "pygame==2.0.0",
     ],
+    extras_require={'tests':tests_require},
 
-    # extras_require={'plotting': ['matplotlib>=2.2.0,, 'jupyter']},
-    tests_require=['pytest',
-                   'pylint'
-                   'mypy',
-                   'ipykernel',
-                   'pytest',
-                   'pytest-cov',
-                   'pytest-xdist',
-                   'autopep8'
-                    ],
 )
