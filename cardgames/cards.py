@@ -1,10 +1,12 @@
 # %%
 from __future__ import annotations
+
+import random
+from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
 from functools import total_ordering
 from typing import List, Union
-import random
 
 
 @total_ordering
@@ -90,6 +92,26 @@ class Stack:
             self.cards = cards
         else:
             self.cards = []
+
+    @property
+    def suits(self):
+        suits = [card.suit for card in self]
+        suits.sort()
+        return suits
+
+    @property
+    def pips(self):
+        pips = [card.pip for card in self]
+        pips.sort()
+        return pips
+
+    @property
+    def same_suits(self):
+        return min(v for k, v in Counter(self.suits).items())
+
+    @property
+    def same_pips(self):
+        return min(v for k, v in Counter(self.pips).items())
 
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)

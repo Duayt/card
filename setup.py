@@ -21,6 +21,7 @@ setuptools.setup(
     python_requires='>=3.9',
     install_requires=[
         "numpy",
+        "pygame",
     ],
 
     # extras_require={'plotting': ['matplotlib>=2.2.0,, 'jupyter']},

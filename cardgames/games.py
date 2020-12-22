@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from cardgames.core import Player, Deck, Game, Stack, Card
 from cardgames.cards import Pip, Suit
-from collections import Counter
 
 
 class PokDengRules:
@@ -16,6 +15,11 @@ class PokDengRules:
         return (cls.rule_JKQ, cls.rule_order, cls.rule_tripple)
 
     @classmethod
+    @property
+    def all_rules(cls):
+        return all([cls.rule_JKQ, cls.rule_order, cls.rule_tripple])
+
+    @classmethod
     def set_rules(cls, rules: tuple[bool, bool, bool] = (True, True, True)):
         cls.rule_JKQ = rules[0]
         cls.rule_order = rules[1]
@@ -23,28 +27,33 @@ class PokDengRules:
 
 
 class PokDengHand(Stack):
+    @property
+    def check_rule_JKQ(self) -> bool:
+        return set(self.pips).issubset([Pip.Jack, Pip.Queen, Pip.King])
+
+    @property
+    def check_rule_order(self) -> bool:
+        return self.pips[2].value - self.pips[1].value == self.pips[1].value - self.pips[0].value == 1
+
+    @property
+    def check_rule_tripple(self) -> bool:
+        return hand.pips[2].value - hand.pips[1].value == hand.pips[1].value - hand.pips[0].value == 1
 
     @property
     def bet_multipler(self):
-        suits = [card.suit for card in self]
-        suits.sort()
-        pips = [card.pip for card in self]
-        pips.sort()
-        same_suits = min(v for k, v in Counter(suits).items())
-        same_pips = min(v for k, v in Counter(pips).items())
         if len(self) <= 2:
-            return max(same_suits, same_pips)
+            return max(self.same_suits, self.same_pips)
         elif len(self) == 3:
-            if PokDengRules.rule_JKQ and set(pips).issubset([Pip.Jack, Pip.Queen, Pip.King]):
+            if PokDengRules.rule_JKQ and self.check_rule_JKQ:
                 # 9 deng if same suit
                 print('jkq')
-                return 3 * same_suits
-            elif PokDengRules.rule_order and pips[2].value - pips[1].value == pips[1].value - pips[0].value == 1:
-                return 3 *same_suits
-            elif PokDengRules.rule_tripple and same_pips == 3:
+                return 3 * self.same_suits
+            elif PokDengRules.rule_order and self.check_rule_order:
+                return 3 * self.same_suits
+            elif PokDengRules.rule_tripple and self.same_pips == 3:
                 return 5
-            elif same_suits == 3:
-                return same_suits
+            elif self.same_suits == 3:
+                return self.same_suits
             else:
                 return 1
         else:

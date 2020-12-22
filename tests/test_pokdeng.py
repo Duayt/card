@@ -13,6 +13,7 @@ def test_pokdenghand():
     assert PokDengRules.rules == (False, False, False)
 
     # Nomal check
+    PokDengRules.all_rules == False
     hand = PokDengHand(
         cards=[Card.new(1, 1), Card.new(11, 1), Card.new(12, 2)])
 
@@ -41,6 +42,7 @@ def test_pokdenghand():
 
     # JKQ
     PokDengRules.set_rules()
+    PokDengRules.all_rules == True
     hand = PokDengHand(
         cards=[Card.new(11, 1), Card.new(12, 1), Card.new(13, 2)])
 
