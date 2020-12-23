@@ -50,7 +50,6 @@ def test_pokdenghand():
     assert hand.bet_multipler == 3
 
     # ORDER
-    PokDengRules.set_rules()
     hand = PokDengHand(
         cards=[Card.new(7, 1), Card.new(8, 1), Card.new(9, 2)])
 
@@ -64,7 +63,6 @@ def test_pokdenghand():
     assert hand.bet_multipler == 5
 
     # JKQ same suit
-    PokDengRules.set_rules()
     hand = PokDengHand(
         cards=[Card.new(11, 1), Card.new(12, 1), Card.new(13, 1)])
 
@@ -72,9 +70,27 @@ def test_pokdenghand():
     assert hand.bet_multipler == 9
 
     # ORDER same suit
-    PokDengRules.set_rules()
     hand = PokDengHand(
         cards=[Card.new(7, 1), Card.new(8, 1), Card.new(9, 1)])
 
     assert hand.value == 4
     assert hand.bet_multipler == 9
+
+
+def test_pokdeng_case():
+    hand1 = PokDengHand(
+        cards=[Card.new(7, 1), Card.new(1, 1)])
+
+    hand2 = PokDengHand(
+        cards=[Card.new(11, 1), Card.new(9, 1)])
+
+    hand3 = PokDengHand(
+        cards=[Card.new(1, 1), Card.new(9, 1)])
+
+    hand4 = PokDengHand(
+        cards=[Card.new(3, 1), Card.new(3, 2), Card.new(3, 3)])
+
+    assert hand1.check_pokdeng == True
+    assert hand2.check_pokdeng == True
+    assert hand3.check_pokdeng == False
+    assert hand4.check_pokdeng == True

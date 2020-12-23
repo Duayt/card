@@ -30,8 +30,9 @@ class PokDengRules:
 class PokDengHand(Stack):
 
     @property
-    def is_pok(self) ->:
-        return (len(self) ==2) and self.value
+    def check_pokdeng(self) -> bool:
+        return self.value in [8, 9]
+
     @property
     def check_rule_JKQ(self) -> bool:
         return set(self.pips).issubset([Pip.Jack, Pip.Queen, Pip.King])
@@ -42,7 +43,7 @@ class PokDengHand(Stack):
 
     @property
     def check_rule_tripple(self) -> bool:
-        return hand.pips[2].value - hand.pips[1].value == hand.pips[1].value - hand.pips[0].value == 1
+        return self.same_pips == 3
 
     @property
     def check_any_rule(self) -> bool:
@@ -59,7 +60,7 @@ class PokDengHand(Stack):
                 return 3 * self.same_suits
             elif PokDengRules.rule_order and self.check_rule_order:
                 return 3 * self.same_suits
-            elif PokDengRules.rule_tripple and self.same_pips == 3:
+            elif PokDengRules.rule_tripple and self.check_rule_tripple:
                 return 5
             elif self.same_suits == 3:
                 return self.same_suits
