@@ -9,16 +9,22 @@ from pygame.locals import (
     QUIT,
 )
 
-pygame.init()
-
-# Define constants for the screen width and height
+# Game constant
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 BACKGROUND_COLOR = (100,255,100)
+
+
+pygame.init()
+
+
 # Set up the drawing window
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+
 # Fill the background with white
 screen.fill(BACKGROUND_COLOR)
+
+
 surf = pygame.Surface((50, 50))
 surf.fill((0, 0, 0))
 rect = surf.get_rect()
