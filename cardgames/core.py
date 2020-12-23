@@ -39,4 +39,7 @@ class Player:
 
 class Dealer(Player):
     def __init__(self, name='dealer', hand: Stack = None):
-        super(Dealer, self).__init__(name=name, hand=hand, wallet=np.Inf)
+        super(Dealer, self).__init__(name=name, hand=hand,
+                                     wallet=np.Inf, default_bet=None)
+
+# %%

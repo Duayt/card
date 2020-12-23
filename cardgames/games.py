@@ -1,11 +1,21 @@
 # %%
 from dataclasses import dataclass
-from cardgames.core import Player, Dealer, Deck, Game, Stack, Card
+from cardgames.core import Player, Deck, Game, Stack, Card
 from cardgames.cards import Pip, Suit
+from enum import Enum
+
+
+class Status(Enum):
+    WIN = 1
+    DRAW = 0
+    LOSE = -1
+
+    def __lt__(self, other):
+        return self.value < other.value
 
 
 class PokDengRules:
-    #https://en.wikipedia.org/wiki/Pok_Deng
+    # https://en.wikipedia.org/wiki/Pok_Deng
     rule_JKQ: bool = False
     rule_order: bool = False
     rule_tripple: bool = False
@@ -34,20 +44,20 @@ class PokDengHand(Stack):
         return self.value in [8, 9]
 
     @property
-    def check_rule_JKQ(self) -> bool:
-        return set(self.pips).issubset([Pip.Jack, Pip.Queen, Pip.King])
-
-    @property
-    def check_rule_order(self) -> bool:
-        return self.pips[2].value - self.pips[1].value == self.pips[1].value - self.pips[0].value == 1
-
-    @property
     def check_rule_tripple(self) -> bool:
         return self.same_pips == 3
 
     @property
-    def check_any_rule(self) -> bool:
-        return any([self.check_rule_JKQ, self.check_rule_order, self.check_rule_tripple])
+    def check_rule_order_flush(self) -> bool:
+        return self.check_rule_order_normal and self.same_suits == 3
+
+    @property
+    def check_rule_order_normal(self) -> bool:
+        return self.pips[2].value - self.pips[1].value == self.pips[1].value - self.pips[0].value == 1
+
+    @property
+    def check_rule_JKQ(self) -> bool:
+        return set(self.pips).issubset([Pip.Jack, Pip.Queen, Pip.King])
 
     @ property
     def bet_multipler(self):
@@ -58,7 +68,7 @@ class PokDengHand(Stack):
                 # 9 deng if same suit
                 print('jkq')
                 return 3 * self.same_suits
-            elif PokDengRules.rule_order and self.check_rule_order:
+            elif PokDengRules.rule_order and (self.check_rule_order_flush or self.check_rule_order_flush):
                 return 3 * self.same_suits
             elif PokDengRules.rule_tripple and self.check_rule_tripple:
                 return 5
@@ -89,7 +99,6 @@ class PokDengHand(Stack):
 class PokDeng(Game):
     players: list[Player]
     dealer: Player
-    n_players:
 
     @ classmethod
     def init_state(self, n_player=3, wallet=None):
