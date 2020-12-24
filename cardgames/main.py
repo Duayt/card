@@ -1,7 +1,8 @@
 # %%
 import pygame
 from pathlib import Path
-from cardgames.games import PokDeng, Pip, Suit, Card
+from cardgames.games import PokDeng, Pip, Suit, Card, PokDengRules, Deck, Stack
+import logging
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -67,28 +68,63 @@ clock = pygame.time.Clock()
 
 
 class HandArea(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, card_stack: Stack = None, pip_margin=20, n_cards=3):
         super(HandArea, self).__init__()
-        self.surf = pygame.Surface((CARD_WIDTH, CARD_HEIGHT))
+        self.surf = pygame.Surface(
+            (CARD_WIDTH+pip_margin*n_cards, CARD_HEIGHT), pygame.SRCALPHA)
         self.rect = self.surf.get_rect()
-        self.rect.centerx = SCREEN_WIDTH / 2
-        self.rect.bottom = SCREEN_HEIGHT - 10
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.pip_margin = pip_margin
+        self.n_cards = n_cards
+        self.card_stack = card_stack
+        self.draw_card()
 
-        pygame.draw.rect(self.surf, BLACK, pygame.Rect(
-            CARD_WIDTH//10, CARD_HEIGHT//10, 4, 4), width=1)
+    def draw_card_boarder(self):
+        for i in range(self.n_cards):
+            pygame.draw.rect(self.surf, BLACK, pygame.Rect(0+i*self.pip_margin, 0,
+                                                           CARD_WIDTH, CARD_HEIGHT), width=1)
+
+    def draw_card(self):
+        if self.card_stack is not None:
+            for i, card in enumerate(self.card_stack):
+                self.surf.blit(img_cards_dict[card.img_name], (0+i*self.pip_margin, 0,
+                                                               CARD_WIDTH, CARD_HEIGHT))
 
 
-deal_area = HandArea(50, 50)
+# logging.basicConfig(level=logging.INFO)
+seed = 1234
+n_player = 3
+PokDengRules.set_rules()
+game = PokDeng.init_state(n_player=n_player, wallet=100)
+# n_games = 2
+# for i in range(n_games):
+#     game.play(seed=i)
+#     print(i)
+
+deck = Deck(is_shuffle=True, seed=seed)
+# deal 1 card each player including dealer
+hands = 2
+for i in range(hands):
+    for p in game.all_players:
+        deck.deal(p.hand, 1)
 # Run until the user asks to quit
+deal_area = HandArea(SCREEN_WIDTH//2,
+                     SCREEN_HEIGHT*3//8, card_stack=game.dealer.hand)
+play_area_list = [HandArea(int((SCREEN_WIDTH//(len(game.players)+1))*(i+1)),
+                           SCREEN_HEIGHT*6//8, card_stack=player.hand) for i, player in enumerate(game.players)]
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
 
-    c = Card.new(1, 1)
-    screen.blit(img_cards_dict[c.img_name], (0, 0, 5, 5))
+    # c = Card.new(1, 1)
+    # screen.blit(img_cards_dict[c.img_name], (0, 0, 5, 5))
     screen.blit(deal_area.surf, deal_area.rect)
+    for area in play_area_list:
+        screen.blit(area.surf, area.rect)
+
     clock.tick(FPS)
     # Flip the display
     pygame.display.flip()
