@@ -57,7 +57,6 @@ class PokDengRules:
 
 
 class PokDengHand(Stack):
-
     @property
     def pokdeng(self) -> bool:
         return self.value in [8, 9] and len(self) == 2
@@ -138,8 +137,6 @@ class PokDengHand(Stack):
 
 @ dataclass
 class PokDeng(Game):
-    players: list[Player]
-    dealer: Player
 
     @ classmethod
     def init_state(self, n_player=3, wallet=None):
@@ -148,31 +145,6 @@ class PokDeng(Game):
         ), wallet=wallet) for i in range(n_player)]
 
         return PokDeng(players=players, dealer=dealer)
-
-    @ property
-    def all_players(self):
-        all_players = self.players+[self.dealer]
-        return all_players
-
-    @ property
-    def active_players(self):
-        active_players = [player for player in self.players if player.active]
-        return active_players
-
-    @ property
-    def players_bets(self, bet_dict=dict()):
-        players_bets = {players.name: players.bet()
-                        for players in self.players}
-        players_bets.update(bet_dict)
-        return players_bets
-
-    @ property
-    def all_hands(self):
-        text = ''
-        for player in self.all_players:
-            text = text + f'{player.name}:{str(player.hand)} \n'
-
-        return text
 
     @staticmethod
     def compare_hand(hand: PokDengHand, other_hand: PokDengHand):
@@ -277,97 +249,21 @@ class PokDeng(Game):
             self.dealer.update_wallet(-bets_result)
         logger.info(self.all_hands)
         self.reset_all_hands()
-        
-        logger.info(bets_result)
+
+        logger.info(bets_results)
+        logger.info('---------------------------------------------------------')
         return bets_result
 
 
-logging.basicConfig(level=logging.INFO)
-seed = 1234
-n_player = 1
-PokDengRules.set_rules()
-game = PokDeng.init_state(n_player=n_player, wallet=100)
-n_games = 10
-for i in range(n_games):
-    game.play()
-# # new shuffle deck
-# deck = Deck(is_shuffle=True, seed=seed)
-
-# # each player place bet
-# players_bets = game.players_bets
-# player_result = {}
-# # deal 1 card each player including dealer
-# hands = 2
-# logger.info(f'n players: {n_player}')
-# logger.info('Dealing cards')
-# for i in range(hands):
-#     for p in game.all_players:
-#         deck.deal(p.hand, 1)
-
-# # session end if dealer pokdeng
-# if game.dealer.hand.pokdeng:
-#     logger.info('Dealer Pok!')
-#     game.deactivate_all_players()
-# else:
-#     logger.info('Dealer Not Pok, continue')
-
-# # check all pokdeng
-# for player in game.active_players:
-#     if player.hand.pokdeng and player.active:
-#         logger.info(f'{player.name} Pok!: {player.hand}')
-#         player.active == False
-
-# if len(game.active_players) > 0:
-#     # player's Actions
-#     action_msg = 'Player actions\n'
-#     for i, action in enumerate(ACTIONS):
-#         action_msg = action_msg+f'\t{i+1}:{ACTIONS(i+1)}'
-#     logger.info(action_msg)
-
-#     for player in game.active_players:
-#         logger.info(f'{player.name} | {player.hand}')
-#         action_input = int(input(f'{player.name} action'))
-#         action_input = ACTIONS(action_input)
-#         logger.info(f'{player.name}:{action_input}')
-#         if action_input == ACTIONS.DRAW:
-#             deck.deal(player.hand, 1)
-#             logger.info(f'{player.name}|{player.hand}')
-
-
-# if len(game.active_players) > 0:
-#     # Dealer actions
-#     action_msg = 'Dealer actions\n'
-#     for i, action in enumerate(ACTIONS):
-#         action_msg = action_msg+f'\t{i+1}:{ACTIONS(i+1)}'
-#     logger.info(action_msg)
-#     logger.info(f'Dealer | {game.dealer.hand}')
-#     action_input = int(input(f'dealer action'))
-#     action_input = ACTIONS(action_input)
-#     if action_input == ACTIONS.DRAW:
-#         deck.deal(game.dealer.hand, 1)
-#         logger.info(f'Dealer | {game.dealer.hand}')
-
-# game.deactivate_all_players()
-
-# # compare hands
-# logger.info('Comparing all hands')
-# player_results = {}
-# bets_results = {}
-# for player in game.players:
-#     hand_result = game.compare_hand(player.hand, game.dealer.hand)
-#     bet_multipler = hand_result.value * \
-#         (player.hand.bet_multipler if hand_result ==
-#          OUTCOME.WIN else game.dealer.hand.bet_multipler)
-#     player_results[player.name] = hand_result
-#     bets_result = bet_multipler * players_bets[player.name]
-#     bets_results[player.name] = bets_result
-#     player.logs.append({'player': player.hand,
-#                         'dealer': game.dealer.hand,
-#                         'bet': players_bets[player.name],
-#                         'bet_result': bets_results[player.name]})
-#     # resolve money
-#     player.update_wallet(bets_result)
-#     dealer.update_wallet(-bets_result)
-
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    seed = 1234
+    n_player = 1
+    PokDengRules.set_rules()
+    game = PokDeng.init_state(n_player=n_player, wallet=100)
+    n_games = 2
+    for i in range(n_games):
+        game.play(seed=i)
+        print(i)
 
 # %%

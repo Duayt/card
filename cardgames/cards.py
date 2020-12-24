@@ -85,6 +85,10 @@ class Card:
     def __lt__(self, other):
         return ((self.pip.value, self.suit.value) < (other.pip.value, other.suit.value))
 
+    @property
+    def img_name(self):
+        return str(self.pip)+str(self.suit.name[0])
+
 
 class Stack:
     def __init__(self, cards: Union[None, List[Card]] = None):

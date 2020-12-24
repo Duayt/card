@@ -6,10 +6,6 @@ from collections import namedtuple
 import numpy as np
 
 
-class Game(ABC):
-    pass
-
-
 class Player:
     def __init__(self, name, hand: Stack = None, wallet=100, default_bet=10):
         if hand is not None:
@@ -46,4 +42,34 @@ class Dealer(Player):
         super(Dealer, self).__init__(name=name, hand=hand,
                                      wallet=0, default_bet=None)
 
+
+@dataclass
+class Game:
+    players: list[Player]
+    dealer: Player
+
+    @ property
+    def all_players(self):
+        all_players = self.players+[self.dealer]
+        return all_players
+
+    @ property
+    def active_players(self):
+        active_players = [player for player in self.players if player.active]
+        return active_players
+
+    @ property
+    def players_bets(self, bet_dict=dict()):
+        players_bets = {players.name: players.bet()
+                        for players in self.players}
+        players_bets.update(bet_dict)
+        return players_bets
+
+    @ property
+    def all_hands(self):
+        text = 'All Hands: \n'
+        for player in self.all_players:
+            text = text + f'\t{player.name}:{str(player.hand)} \n'
+
+        return text
 # %%
