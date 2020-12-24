@@ -120,13 +120,14 @@ class Stack:
             return min(v for k, v in Counter(self.pips).items())
 
     def shuffle(self, seed=None):
-        random.shuffle(self.cards, seed)
+        random.seed(seed)
+        random.shuffle(self.cards)
 
     def __len__(self):
         return len(self.cards)
 
     def __str__(self):
-        return f'{len(self.cards)}{self.cards}'
+        return f'{self.cards}'
 
     def __repr__(self):
         return self.__str__()

@@ -20,6 +20,7 @@ class Player:
         self.wallet = wallet
         self.logs = []
         self.default_bet = default_bet
+        self.active = True
 
     def __str__(self):
         return f'{self.name}: {str(self.wallet)}'
@@ -35,6 +36,9 @@ class Player:
         if bet is None:
             bet = self.default_bet
         return min(bet, self.wallet)
+
+    def update_wallet(self, value):
+        self.wallet += value
 
 
 class Dealer(Player):
