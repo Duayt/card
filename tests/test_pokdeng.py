@@ -1,6 +1,6 @@
 from cardgames.core import Player
 from cardgames.cards import Card
-from cardgames.games import PokDengHand, PokDengRules
+from cardgames.games import PokDengHand, PokDengRules, PokDeng, OUTCOME
 
 
 def test_pokdenghand():
@@ -40,7 +40,7 @@ def test_pokdenghand():
 
     # All rules
 
-    # JKQ
+    # JQK
     PokDengRules.set_rules()
     PokDengRules.all_rules == True
     hand = PokDengHand(
@@ -55,6 +55,7 @@ def test_pokdenghand():
 
     assert hand.value == 4
     assert hand.bet_multipler == 3
+
     # Tripple
     hand = PokDengHand(
         cards=[Card.new(3, 1), Card.new(3, 2), Card.new(3, 3)])
@@ -62,19 +63,19 @@ def test_pokdenghand():
     assert hand.value == 9
     assert hand.bet_multipler == 5
 
-    # JKQ same suit
+    # JQK same suit
     hand = PokDengHand(
         cards=[Card.new(11, 1), Card.new(12, 1), Card.new(13, 1)])
 
     assert hand.value == 0
-    assert hand.bet_multipler == 9
+    assert hand.bet_multipler == 3
 
-    # ORDER same suit
+    # ORDER flush
     hand = PokDengHand(
         cards=[Card.new(7, 1), Card.new(8, 1), Card.new(9, 1)])
 
     assert hand.value == 4
-    assert hand.bet_multipler == 9
+    assert hand.bet_multipler == 3
 
 
 def test_pokdeng_case():
@@ -90,7 +91,16 @@ def test_pokdeng_case():
     hand4 = PokDengHand(
         cards=[Card.new(3, 1), Card.new(3, 2), Card.new(3, 3)])
 
-    assert hand1.check_pokdeng == True
-    assert hand2.check_pokdeng == True
-    assert hand3.check_pokdeng == False
-    assert hand4.check_pokdeng == True
+    hand5 = PokDengHand(
+        cards=[Card.new(1, 2), Card.new(9, 3), Card.new(12, 4)])
+
+    assert hand1.pokdeng == True
+    assert hand2.pokdeng == True
+    assert hand3.pokdeng == False
+    assert hand4.pokdeng == False
+
+    assert PokDeng.compare_hand(hand1, hand2) == OUTCOME.LOSE
+    assert PokDeng.compare_hand(hand1, hand3) == OUTCOME.WIN
+    assert PokDeng.compare_hand(hand1, hand4) == OUTCOME.WIN
+    assert PokDeng.compare_hand(hand2, hand4) == OUTCOME.WIN
+    assert PokDeng.compare_hand(hand3, hand5) == OUTCOME.DRAW

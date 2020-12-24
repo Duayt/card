@@ -22,7 +22,7 @@ class Player:
         self.default_bet = default_bet
 
     def __str__(self):
-        return f'{self.name}: {str(self.hand)}'
+        return f'{self.name}: {str(self.wallet)}'
 
     def __repr__(self):
         return str(self)
@@ -40,6 +40,6 @@ class Player:
 class Dealer(Player):
     def __init__(self, name='dealer', hand: Stack = None):
         super(Dealer, self).__init__(name=name, hand=hand,
-                                     wallet=np.Inf, default_bet=None)
+                                     wallet=0, default_bet=None)
 
 # %%

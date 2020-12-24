@@ -107,11 +107,17 @@ class Stack:
 
     @property
     def same_suits(self):
-        return min(v for k, v in Counter(self.suits).items())
+        if len(self) == 0:
+            return 0
+        else:
+            return min(v for k, v in Counter(self.suits).items())
 
     @property
     def same_pips(self):
-        return min(v for k, v in Counter(self.pips).items())
+        if len(self) == 0:
+            return 0
+        else:
+            return min(v for k, v in Counter(self.pips).items())
 
     def shuffle(self, seed=None):
         random.shuffle(self.cards, seed)
