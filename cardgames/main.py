@@ -57,8 +57,8 @@ pygame.init()
 pygame.mixer.init()
 
 # Sounds
-# pygame.mixer.music.load(str(sound_dir / 'casino.wav'))
-# pygame.mixer.music.play(loops=-1)
+pygame.mixer.music.load(str(sound_dir / 'casino.wav'))
+pygame.mixer.music.play(loops=-1)
 
 #
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
@@ -73,8 +73,6 @@ clock = pygame.time.Clock()
 
 # Object
 
-import pandas as pd
-pd.read_csv()
 class pgHand(pygame.sprite.Sprite):
     def __init__(self, x, y, card_stack: Stack = None, pip_margin=20, n_cards=3):
         super(pgHand, self).__init__()
