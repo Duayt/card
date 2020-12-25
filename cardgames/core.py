@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from collections import namedtuple
 import numpy as np
 
-
 class Player:
     def __init__(self, name, hand: Stack = None, wallet=100, default_bet=10):
         if hand is not None:
@@ -41,7 +40,6 @@ class Dealer(Player):
     def __init__(self, name='dealer', hand: Stack = None):
         super(Dealer, self).__init__(name=name, hand=hand,
                                      wallet=0, default_bet=None)
-
 
 @dataclass
 class Game:

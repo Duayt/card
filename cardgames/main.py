@@ -33,9 +33,11 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
 # Path
-asset_dir = Path(__file__).parent / 'assets'
+this_path = Path(__file__).parent
+asset_dir = this_path / 'assets'
 icon_dir = asset_dir / 'icon.png'
 cards_dir = asset_dir/'cards'
+sound_dir = this_path / 'sounds'
 
 # Load images
 img_icon = pygame.image.load(str(icon_dir))
@@ -54,6 +56,11 @@ for p in Pip:
 pygame.init()
 pygame.mixer.init()
 
+# Sounds
+# pygame.mixer.music.load(str(sound_dir / 'casino.wav'))
+# pygame.mixer.music.play(loops=-1)
+
+#
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
 screen.fill(BACKGROUND_COLOR)
 
@@ -66,10 +73,11 @@ clock = pygame.time.Clock()
 
 # Object
 
-
-class HandArea(pygame.sprite.Sprite):
+import pandas as pd
+pd.read_csv()
+class pgHand(pygame.sprite.Sprite):
     def __init__(self, x, y, card_stack: Stack = None, pip_margin=20, n_cards=3):
-        super(HandArea, self).__init__()
+        super(pgHand, self).__init__()
         self.surf = pygame.Surface(
             (CARD_WIDTH+pip_margin*n_cards, CARD_HEIGHT), pygame.SRCALPHA)
         self.rect = self.surf.get_rect()
@@ -94,7 +102,7 @@ class HandArea(pygame.sprite.Sprite):
 
 # logging.basicConfig(level=logging.INFO)
 seed = 1234
-n_player = 3
+n_player = 1
 PokDengRules.set_rules()
 game = PokDeng.init_state(n_player=n_player, wallet=100)
 # n_games = 2
@@ -109,10 +117,10 @@ for i in range(hands):
     for p in game.all_players:
         deck.deal(p.hand, 1)
 # Run until the user asks to quit
-deal_area = HandArea(SCREEN_WIDTH//2,
-                     SCREEN_HEIGHT*3//8, card_stack=game.dealer.hand)
-play_area_list = [HandArea(int((SCREEN_WIDTH//(len(game.players)+1))*(i+1)),
-                           SCREEN_HEIGHT*6//8, card_stack=player.hand) for i, player in enumerate(game.players)]
+deal_area = pgHand(SCREEN_WIDTH//2,
+                   SCREEN_HEIGHT*3//8, card_stack=game.dealer.hand)
+play_area_list = [pgHand(int((SCREEN_WIDTH//(len(game.players)+1))*(i+1)),
+                         SCREEN_HEIGHT*6//8, card_stack=player.hand) for i, player in enumerate(game.players)]
 running = True
 while running:
     for event in pygame.event.get():
