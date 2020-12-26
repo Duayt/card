@@ -100,7 +100,7 @@ class pgHand(pygame.sprite.Sprite):
 
 # logging.basicConfig(level=logging.INFO)
 seed = 1234
-n_player = 1
+n_player = 4
 PokDengRules.set_rules()
 game = PokDeng.init_state(n_player=n_player, wallet=100)
 # n_games = 2
