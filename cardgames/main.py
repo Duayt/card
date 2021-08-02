@@ -57,6 +57,8 @@ pygame.init()
 pygame.mixer.init()
 
 # Sounds
+# print(pygame.mixer.music.get_volume())
+pygame.mixer.music.set_volume(0.01)
 pygame.mixer.music.load(str(sound_dir / 'casino.wav'))
 pygame.mixer.music.play(loops=-1)
 
