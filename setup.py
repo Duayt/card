@@ -26,8 +26,8 @@ setuptools.setup(
     ],
     python_requires='>=3.9',
     install_requires=[
-        "numpy==1.19.3",
-        "pygame==2.0.0",
+        "numpy==1.21.1",
+        "pygame>=2.0.0",
     ],
     extras_require={'tests':tests_require},
 
